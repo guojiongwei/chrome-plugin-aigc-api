@@ -1,0 +1,75 @@
+.popup {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00b96b;
+    padding: 15px 0;
+    border-bottom: 1px solid rgb(240, 240, 240);
+    img {
+      width: 45px;
+      margin-right: 4px;
+    }
+  }
+
+  .setting {
+    padding: 15px 10px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    .formItem {
+      display: flex;
+      margin: 5px 0;
+      span {
+        width: 65px;
+        color: #333;
+      }
+    }
+
+    .subTitle {
+      margin-top: 10px;
+    }
+
+    .nofindApi {
+      color: #666;
+      margin-top: 10px;
+      span {
+        color: #00b96b;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .errorMsg {
+    padding: 10px;
+    background-color: #fff2f0;
+    border: 1px solid #ffccc7;
+  }
+
+  .apiBtn {
+    padding: 6px 15px;
+    background: #00b96b;
+    color: #fff;
+    border-radius: 3px;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .content {
+    white-space: pre-wrap;
+    flex: 1;
+    overflow: auto;
+    padding: 0 20px;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    border-top: 1px solid rgb(240, 240, 240);
+  }
+}

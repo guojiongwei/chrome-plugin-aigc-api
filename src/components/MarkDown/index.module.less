@@ -1,0 +1,162 @@
+.copy {
+  position: absolute;
+  top: -32px;
+  left: 0;
+  display: flex;
+  width: 100%;
+  height: 32px;
+  padding: 0 20px;
+  font-size: 12px;
+  color: rgb(217 217 227 / 100%);
+  background: rgb(52 53 65 / 100%);
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+
+  :global {
+    span:last-child {
+      cursor: pointer;
+    }
+  }
+}
+
+.code {
+  position: relative;
+  top: 13px;
+  overflow-y: auto;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.showMark {
+  &:empty::after,
+  & > :last-child::after {
+    margin-left: 4px;
+    vertical-align: baseline;
+    content: "▋";
+    animation: blink 1s linear infinite;
+  }
+}
+
+.markdownWrap {
+  p,
+  li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  & > p:first-child {
+    margin-top: 0;
+  }
+
+  & > p:last-child {
+    margin-bottom: 0;
+  }
+
+  :global {
+    code {
+      white-space: pre;
+    }
+
+    table {
+      margin-top: 10px;
+      border-collapse: collapse;
+      border: 1px solid #e3e3e3;
+
+      td,
+      th {
+        padding: 10px;
+        border: 1px solid #e3e3e3;
+      }
+    }
+
+    pre {
+      position: relative;
+      padding: 0 20px;
+      margin-top: 40px;
+      font-family: "Söhne Mono", Monaco, "Andale Mono", "Ubuntu Mono", monospace !important;
+      color: #fff;
+      white-space: nowrap;
+      background: #000;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+
+    code[class="language-plaintext"] {
+      white-space: pre-line;
+    }
+
+    pre[class*="language-"] {
+      overflow: auto;
+      border-radius: 0.3em;
+    }
+
+    :not(pre) > code.hljs,
+    :not(pre) > code[class*="language-"] {
+      padding: 0.1em;
+      white-space: normal;
+      border-radius: 0.3em;
+    }
+
+    .hljs-comment {
+      color: hsl(0deg 0% 100% / 50%);
+    }
+
+    .hljs-meta {
+      color: hsl(0deg 0% 100% / 60%);
+    }
+
+    .hljs-doctag,
+    .hljs-formula,
+    .hljs-keyword,
+    .hljs-literal {
+      color: #2e95d3;
+    }
+
+    .hljs-addition,
+    .hljs-attribute,
+    .hljs-meta-string,
+    .hljs-regexp,
+    .hljs-string {
+      color: #00a67d;
+    }
+
+    .hljs-attr,
+    .hljs-number,
+    .hljs-selector-attr,
+    .hljs-selector-class,
+    .hljs-selector-pseudo,
+    .hljs-template-variable,
+    .hljs-type,
+    .hljs-variable {
+      color: #df3079;
+    }
+
+    .hljs-bullet,
+    .hljs-link,
+    .hljs-selector-id,
+    .hljs-symbol,
+    .hljs-title {
+      color: #f22c3d;
+    }
+
+    .hljs-built_in,
+    .hljs-class .hljs-title {
+      color: #e9950c;
+    }
+  }
+}
