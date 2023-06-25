@@ -72,7 +72,7 @@ export const onScrollElBottom = (el: Element, timeout = 100) => {
 }
 
 export const filterMarkdown = (str = '') => {
-  return str.replace(/(\*)|(`)|(#)|( )|(请求方式)|(接口地址)/g, '')
+  return str.replace(/(\*)|(`)|(#)|( )|(请求方式)|(接口地址)|(:)/g, '')
 }
 
 export function renderSuncess(type: string, data: unknown) {

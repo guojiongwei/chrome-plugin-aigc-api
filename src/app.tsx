@@ -16,19 +16,30 @@ const fliterMap: { [index: string]: true } = {
 
 const App = () => {
   useEffect(() => {
+    onListenApiData()
     onGetApiData()
   }, [])
 
-  /** 获取api文档信息 */
+  /** 发送获取api文档信息消息 */
   const onGetApiData = async () => {
     const currentTab = await getCurrentTab()
     if (!currentTab.url.startsWith('http')) return
     const action = { type: 'GET_API_JSON' }
-    chrome.tabs.sendMessage(currentTab?.id!, JSON.stringify(action), function (res) {
-      if (!res) return
-      const action = JSON.parse(res)
-      const { code, data } = action
-      onSendApiJSON(code, data)
+    chrome.tabs.sendMessage(currentTab?.id!, JSON.stringify(action))
+  }
+
+  /** 接收api文档信息 */
+  const onListenApiData = () => {
+    chrome.runtime.onMessage.addListener(function (request) {
+      const action = JSON.parse(request)
+      const { type, payload } = action
+      // 存储token和用户信息
+      if (type === 'GET_API_JSON_SUCCESS') {
+        if (!payload) return
+        const action = JSON.parse(payload)
+        const { code, data } = action
+        onSendApiJSON(code, data)
+      }
     })
   }
 

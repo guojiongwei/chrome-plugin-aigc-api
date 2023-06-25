@@ -31,5 +31,5 @@ export function getYapiJson() {
       `接口返回数据:${DocsData.res_body}`
     : ''
   console.log('data', data)
-  return JSON.stringify({ code: 200, data })
+  return data
 }

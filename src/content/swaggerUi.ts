@@ -67,5 +67,5 @@ export function getSwaggerUIJson() {
   const data = title
     ? `${title}\n${path}\n${method}\n接口请求参数:${JSON.stringify(req_body)}\n接口返回数据:${JSON.stringify(res_body)}`
     : ''
-  return JSON.stringify({ code: 200, data })
+  return data
 }
