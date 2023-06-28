@@ -6,6 +6,7 @@ import { onAskGpt } from '@/utils/askGpt'
 import { filterMarkdown, onScrollElBottom } from '@/utils/tools'
 import { MarkDown } from '@/components'
 import styles from '@/app.module.less'
+import { templateMap } from '@/common/config'
 
 const fliterMap: { [index: string]: true } = {
   '': true,
@@ -15,11 +16,6 @@ const fliterMap: { [index: string]: true } = {
 }
 
 const App = () => {
-  useEffect(() => {
-    onListenApiData()
-    onGetApiData()
-  }, [])
-
   /** 发送获取api文档信息消息 */
   const onGetApiData = async () => {
     const currentTab = await getCurrentTab()
@@ -43,6 +39,11 @@ const App = () => {
     })
   }
 
+  useEffect(() => {
+    onListenApiData()
+    onGetApiData()
+  }, [])
+
   const [currentApi, setCurrentApi] = useState<string[]>([])
   const sendMsgRef = useRef<string>('')
   const initLoadRef = useRef(true)
@@ -63,6 +64,7 @@ const App = () => {
     }
   }
 
+  /** 响应内容 */
   const [content, setContent] = useState<string>('')
   const [askErrorReson, setAskErrorReson] = useState<IErroeReson>({})
   const [asking, setAsking] = useState(false)
@@ -70,13 +72,19 @@ const App = () => {
   const scrollRef = useRef<HTMLDivElement>(null)
   const renderRef = useRef<ReadableStreamDefaultReader<Uint8Array>>()
 
+  /** 当前的语言 */
   const [language, setLanguage] = useState('typescript')
-  // const [coment, setComent] = useState(false)
+  useEffect(() => {
+    chrome.storage.local.get('language').then(res => {
+      if (res.language) setLanguage(res.language)
+    })
+  }, [])
+
   /** 开始询问问题 */
   const onAsk = async () => {
     if (!sendMsgRef.current) return toast.show('未获取api文档信息!')
     onAskGpt({
-      sendMsg: [{ role: 'user', content: onGetWord() + sendMsgRef.current }],
+      sendMsg: [{ role: 'user', content: onGetWord() + sendMsgRef.current.replace(/( )|(--)/g, '') }],
       async onStart() {
         if (renderRef.current) await renderRef.current.cancel()
         askingRef.current = true
@@ -93,17 +101,14 @@ const App = () => {
         renderRef.current = reader
       },
       onMessage(msg) {
-        if (askingRef.current) {
-          setContent(msg)
-          onScrollElBottom(scrollRef.current)
-        }
+        setContent(msg)
+        onScrollElBottom(scrollRef.current)
       },
       onError(msg) {
         setAskErrorReson({ errorMsg: msg })
       },
     })
   }
-  // console.log(scrollRef.current);
 
   /** 停止生成 */
   const onStop = async () => {
@@ -113,29 +118,39 @@ const App = () => {
     renderRef.current = undefined
   }
 
+  const [editing, setEditing] = useState(false)
+  const [template, setTemplate] = useState('')
+  const textareaRef = useRef<HTMLTextAreaElement>()
+  /** 缓存当前语言和模版 */
+  useEffect(() => {
+    if (language) {
+      chrome.storage.local.get(language).then(res => {
+        setTemplate(res[language] || templateMap[language] || '')
+      })
+      chrome.storage.local.set({ language })
+    }
+  }, [language, editing])
+
+  /** 编辑模版 */
+  const onEditTemplate = () => {
+    setEditing(true)
+    textareaRef.current.value = template
+  }
+
+  /** 确认修改模版 */
+  const onCOnfirmTemplate = () => {
+    chrome.storage.local.set({ [language]: template })
+    setEditing(false)
+  }
+
   /** 获取提词 */
   const onGetWord = () => {
     return `根据下面的api文档，用${language}生成封装请求接口${
-      language.includes('script')
-        ? `以下代码为返回的模版，请带上对应注释
-    import request from '@/utils/request'
-
-    /** 接口描述-参数 */
-    export interface IApiDescParams {
-      /** 分页数量 */
-      pageSize: number
-    }
-
-    /** 接口描述-响应 */
-    export interface IApiDescResonse {}
-
-    /** 接口描述-接口 */
-    export const methodApiDescApi = (params: IApiDescParams) => {
-      return request.get<IApiDescResonse>('/xxx', params)
-    }`
+      template
+        ? `以下代码为返回的模版：
+        ${template}`
         : ''
-    };
-    接口参数params请按照模版格式不要变成{ params }，只返回代码和对应模版注释，代码开始和结束时必须带上\`\`\`代码标识。\n`
+    }。只返回代码和对应模版注释，代码前后带上\`\`\`。\n`
   }
 
   return (
@@ -144,7 +159,7 @@ const App = () => {
         <span>AIGC-API</span>
       </h2>
       <div className={styles.content} ref={scrollRef}>
-        <div className={styles.setting}>
+        <div className={styles.apiInfo}>
           <h3>api文档信息</h3>
           {!!currentApi.length ? (
             <>
@@ -167,28 +182,39 @@ const App = () => {
             </div>
           )}
           <h3 className={styles.subTitle}>配置项</h3>
-          {/* <div className={styles.formItem}>
-            <span>字段注释：</span>
-            <input type='checkbox' onChange={(e: any) => setComent(e.target.checked)} />
-          </div> */}
           <div className={styles.formItem}>
             <span>生成语言：</span>
-            <select name='lang' onChange={(e: any) => setLanguage(e.target.value)}>
-              <option value='typescript' default>
-                typescript
-              </option>
+            <select name='lang' onChange={(e: any) => setLanguage(e.target.value)} value={language}>
+              <option value='typescript'>typescript</option>
               <option value='javascript'>javascript</option>
               <option value='java'>java</option>
               <option value='python'>python</option>
               <option value='golang'>golang</option>
               <option value='php'>php</option>
               <option value='unity'>unity</option>
+              <option value='dart'>dart</option>
               <option value='c++'>c++</option>
             </select>
           </div>
+          <div className={styles.formItem}>
+            <span>模版配置：</span>
+            <span>{template ? '自定义模版' : '无'}</span>
+            {editing && (
+              <a className='clicl-text' onClick={() => setEditing(false)}>
+                取消
+              </a>
+            )}
+            &nbsp;
+            <a className='clicl-text' onClick={editing ? onCOnfirmTemplate : onEditTemplate}>
+              {editing ? '确定' : '编辑'}
+            </a>
+          </div>
+          <div className={styles.editTemplate} style={{ display: editing ? 'block' : 'none' }}>
+            <textarea placeholder='请输入接口请求模版示例' className={styles.templateIpt} ref={textareaRef}></textarea>
+          </div>
         </div>
         {!askErrorReson.errorMsg ? (
-          <MarkDown content={content} showMark={asking} defaultLang='tsx' />
+          <MarkDown content={content} showMark={asking} defaultLang={language} />
         ) : (
           <div className={styles.errorMsg}>{askErrorReson.errorMsg}</div>
         )}

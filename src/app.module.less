@@ -8,15 +8,52 @@
     justify-content: center;
     color: #00b96b;
     padding: 15px 0;
+    position: relative;
     border-bottom: 1px solid rgb(240, 240, 240);
     img {
       width: 45px;
       margin-right: 4px;
     }
+
+    .setting {
+      position: absolute;
+      right: 20px;
+      .settingDown {
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+        transition: all .3s;
+        left: -70px;
+        padding: 10px;
+        color: #333;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+        span {
+          transition: all .3s;
+          font-size: 14px;
+          font-weight: 400;
+          display: block;
+          padding: 5px 10px;
+          cursor: pointer;
+          &:hover {
+            color: #00b96b;
+          }
+        }
+      }
+
+      &:hover {
+        .settingDown {
+          opacity: 1;
+          z-index: 1;
+        }
+      }
+    }
+
   }
 
-  .setting {
-    padding: 15px 10px 10px 10px;
+  .apiInfo {
+    padding-top: 15px;
     display: flex;
     flex-direction: column;
     .formItem {
@@ -28,6 +65,21 @@
       }
     }
 
+    .editTemplate {
+
+      text-align: right;
+      .templateIpt {
+        width: 100%;
+        height: 240px;
+        border-radius: 2px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-color: #999;
+        white-space: nowrap;
+        margin-bottom: 10px;
+      }
+
+    }
     .subTitle {
       margin-top: 10px;
     }

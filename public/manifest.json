@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "aigc-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "借助chatgpt根据接口文档生成对应语言的api请求",
   "options_page": "index.html",
   "action": {
@@ -42,6 +42,7 @@
     }
   ],
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
   ]
 }
